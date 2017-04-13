@@ -21,13 +21,33 @@ verbose=False
 ### IO ###
 xrd="root://xrootd-cms.infn.it/"
 eos="/afs/cern.ch/user/b/benjamin/eos/cms"
+#TTBar:
+#files=[
+#"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/10803548-3A15-E711-A0DF-0CC47A4D75F2.root",
+#"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/9A82EB4B-3A15-E711-B3AB-0025905B857E.root",
+#"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/9E26204C-3A15-E711-B349-0025905A497A.root"
+#]
+#ZMM:
+#files=[
+#"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/5E0BDD07-3115-E711-9C97-0CC47A4D7650.root",
+#"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/6ED0800C-3115-E711-AAEC-0025905A6118.root"
+#]
+#ZMM PU:
 files=[
-"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/10803548-3A15-E711-A0DF-0CC47A4D75F2.root",
-"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/9A82EB4B-3A15-E711-B3AB-0025905B857E.root",
-"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/90X_upgrade2017_realistic_v20_HS-v1/00000/9E26204C-3A15-E711-B349-0025905A497A.root"
+"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/3E24236C-421A-E711-8EA7-0CC47A4D769E.root",
+"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/6014C265-421A-E711-9CC1-0CC47A4D760C.root",
+"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/76F37D67-F419-E711-B036-0CC47A78A456.root",
+"/store/relval/CMSSW_9_0_0/RelValZMM_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/F2DF246F-231A-E711-BF52-0CC47A7C340E.root"
 ]
-print "Running on TTBar HS Plan1 sample:"
-outName='Hist-20170412_TTbarPlan1.root'
+#TTbar PU:
+#files=[
+#"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/644A5B19-0C1A-E711-9106-0CC47A4D7636.root",
+#"/store/relval/CMSSW_9_0_0/RelValTTbar_13/MINIAODSIM/PU25ns_90X_upgrade2017_realistic_v20_HS-v1/00000/A2DD5B1A-0C1A-E711-9A29-0025905B855E.root"
+#]
+
+
+print "Running on HS Plan1 sample:"
+outName='Hist-20170412_ZMMPUPlan1_woOfflineIso.root'
 outputFile = TFile(outName,'RECREATE')
 
 ### Objects from file ###
@@ -96,7 +116,7 @@ for f in files:
 		selectedMuons=[]
 		for i,mu in enumerate(muons.product()):
 			if mu.pt() < 22 or not mu.isTightMuon(PV): continue #Looking at good muons
-			if (mu.pfIsolationR04().sumChargedHadronPt + max(0., mu.pfIsolationR04().sumNeutralHadronEt + mu.pfIsolationR04().sumPhotonEt - 0.5*mu.pfIsolationR04().sumPUPt))/mu.pt() >0.15: continue #PFIso tight=0.15, loose=0.25
+#			if (mu.pfIsolationR04().sumChargedHadronPt + max(0., mu.pfIsolationR04().sumNeutralHadronEt + mu.pfIsolationR04().sumPhotonEt - 0.5*mu.pfIsolationR04().sumPUPt))/mu.pt() >0.15: continue #PFIso tight=0.15, loose=0.25
 			numMuPassed+=1
 			selectedMuons.append(mu)
 		if verbose: print "number of muons passing selection in event: ",numMuPassed
@@ -109,10 +129,15 @@ for f in files:
 		isoMu24RF = "hltL3fL1sMu22L1f0L2f10QL3Filtered24Q" #IsoMu24 reco filter
 		isoMu24IF = "hltL3crIsoL1sMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p09" #IsoMu24 isolation filter
 
+		isoMu20EF = "hltL3fL1sMu18L1f0L2f10QL3Filtered20QL3pfecalIsoRhoFilteredEB0p11EE0p08" #IsoMu20 ECALiso filter
+		isoMu20HF = "hltL3fL1sMu18L1f0L2f10QL3Filtered20QL3pfhcalIsoRhoFilteredHB0p21HE0p22" #IsoMu20 HCALiso filter
+		isoTkMu20EF = "hltL3fL1sMu18f0TkFiltered20QL3pfecalIsoRhoFilteredEB0p11EE0p08" #IsoTkMu20 ECALiso filter
+		isoTkMu20HF = "hltL3fL1sMu18f0TkFiltered20QL3pfhcalIsoRhoFilteredHB0p21HE0p22" #IsoTkMu20 HCALiso filter
+
 		names = event.object().triggerNames(triggerBits.product())
 		for j,to in enumerate(triggerObjects.product()):
 			for f in to.filterLabels():
-				if (f==isoMu20RF or f==isoTkMu20RF):
+				if (f==isoMu20EF or f==isoTkMu20EF):
 #					print "passed (Tk)Mu20! Trigger object pt %6.2f eta %+5.3f phi %+5.3f " % (to.pt(),to.eta(),to.phi())
 					for mu in selectedMuons:
 						if (DeltaR2(mu,to)<0.2):
@@ -132,7 +157,7 @@ for f in files:
 								passedEta3Mu24Eta.Fill(mu.eta())
 								passedEta3Mu24Phi.Fill(mu.phi())
 
-				if (f==isoMu20IF or f==isoTkMu20IF):
+				if (f==isoMu20HF or f==isoTkMu20HF):
 #					print "passed Iso(Tk)Mu20! Trigger object pt %6.2f eta %+5.3f phi %+5.3f " % (to.pt(),to.eta(),to.phi())
 					for mu in selectedMuons:
 						if (DeltaR2(mu,to)<0.2):
